@@ -25,7 +25,6 @@ const explore: { fields: string[] } = {
 const columns: TableColumnProps[] = explore.fields.map(field => ({
   name: startCase(field),
   cell: get(field),
-  sortable: true,
   selector: get(field),
 }))
 

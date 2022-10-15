@@ -2,12 +2,8 @@ import React from 'react'
 import { TableComponentProps, TableColumnProps } from './Table.component'
 import { getColStyle } from './ColumnLabels.component'
 
-const randomString = () => {
-  return Math.random().toString(36).substring(7)
-}
-
 const truncate = (str: string) => 
-  str.length > 49 ? str.slice(0, 49) + '...' : str
+  str.length > 44 ? str.slice(0, 44) + '...' : str
 
 interface RowProps extends TableComponentProps {
   row: any
@@ -28,7 +24,7 @@ export const TableRow: React.FC<RowProps> = ({ columns, row, style }) => {
     return (
       <span
         aria-label={col.name}
-        key={col.name ? col.name : randomString()}
+        key={col.name}
         style={{
           ...colStyle,
           border: '1px solid black',

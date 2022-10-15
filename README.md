@@ -9,14 +9,14 @@ Code from an old project that created an in-house solution.
 - dynamic column/cell styling
 - dynamic jsx cell rendering
 - dynamic jsx label rendering
+- handles row objects with nested data
 - hide/show column labels
 - optional pagination
+- row virtualization
 - sheets-like grid and non/grid rendering option
 - small memory footprint
 
 ## TODO
-- [ ] add column virtualization
-- [ ] hide/show column
 - [x] make headers sticky
 - [x] make horizontal scrollable and update style options
 - [x] remove Icon implementation

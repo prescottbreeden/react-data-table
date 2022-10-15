@@ -2,9 +2,7 @@ import React from 'react'
 import { TableColumnProps, TableComponentProps } from './Table.component'
 
 // --[ utils ]-----------------------------------------------------------
-export const getColStyle = (
-  col: TableColumnProps
-) => {
+export const getColStyle = (col: TableColumnProps) => {
   const { style, center, width } = col
   const defaultWidth = 400
 
@@ -46,7 +44,13 @@ export interface ColumnProps extends TableComponentProps {
 }
 
 export const ColumnLabels: React.FC<ColumnProps> = (props) => {
-  const { columns, setSortedColumn, toggleReverseSort } = props
+  const {
+    columns,
+    reverseSort,
+    setSortedColumn,
+    sortedColumn,
+    toggleReverseSort,
+  } = props
 
   const handleClick = (index: number) => {
     setSortedColumn(index)
@@ -79,9 +83,15 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
 
         return (
           <span key={`${col.name}-${index}`} style={colLabel}>
-            <span onClick={() => handleClick(index)}>
-              {renderLabel(col)}
-            </span>
+            <span>{renderLabel(col)}</span>
+            <button
+              style={{ margin: '0 5px', padding: '2px 9px' }}
+              onClick={() => handleClick(index)}
+            >
+              sort me
+            </button>
+            {sortedColumn === index &&
+              (reverseSort ? <span>&darr;</span> : <span>&uarr;</span>)}
           </span>
         )
       })}
