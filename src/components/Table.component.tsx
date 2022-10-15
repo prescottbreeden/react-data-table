@@ -1,17 +1,8 @@
 import React from 'react'
-import { sortBy, reverse, get } from 'lodash'
-import { randomString } from '../util/objectUtility'
+import { sortBy, reverse } from 'lodash'
 import { ColumnLabels } from './ColumnLabels.component'
 import { TableBody } from './TableBody.component'
 import { IconButton } from './IconButton'
-
-export const FlexRow: React.FC<any> = (props) => {
-  return (
-    <div {...props} className="form__row">
-      {props.children}
-    </div>
-  )
-}
 
 export interface TableComponentProps {
   cellGrid?: boolean
@@ -21,8 +12,8 @@ export interface TableComponentProps {
   displayColumnLabels?: boolean
   noDataComponent?: JSX.Element
   onRowClick?: (row: any) => void | any
+  paginate?: boolean
   paginationQuantity?: number
-  tableRowKey?: string
 }
 
 export type CellContainer = (row: any) => JSX.Element | string | null
@@ -42,11 +33,6 @@ export interface TableColumnProps {
 export interface ConditionalRowStyle {
   style: any
   when: (row: any) => boolean
-}
-
-export type RowContainer = {
-  datum: any
-  id: any
 }
 
 export type ExpandDict = {
@@ -73,11 +59,8 @@ export type ExpandDict = {
  * @prop conditionalRowStyles Array of conditional styles
  * @prop data Array of data you want to display
  * @prop displayColumnLabels True/False if you want to show column labels
- * @prop expandableRow Function that returns a JSX.Element or null
  * @prop noDataComponent JSX.Element to render if data is empty
  * @prop onRowClick Function that executes when a row is interacted with
- * @prop tableRowKey a property of data that can generate a unique identifier for each row
- * @prop useRowExpander renders an icon that rotates as a row expands
  */
 export const TableComponent: React.FC<TableComponentProps> = (props) => {
   const {
@@ -85,20 +68,18 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
     data = [],
     displayColumnLabels = true,
     noDataComponent,
+    paginate,
     paginationQuantity = 25,
-    tableRowKey,
   } = props
 
   // ----------------------------------
   //      State Management
   // ----------------------------------
-  const [rows, setRows] = React.useState<RowContainer[]>()
-
   // pagination
   const [pageNumber, setPageNumber] = React.useState<number>(1)
   const [chunk, setChunk] = React.useState<number>(paginationQuantity)
   const [pagination, setPagination] = React.useState<any[]>([])
-  const pages = data && data.length ? Math.floor(data.length / chunk) + 1 : 1
+  const pages = data && data.length ? Math.ceil(data.length / chunk) : 1
 
   // column sorting
   const [sortedColumn, setSortedColumn] = React.useState<number>(-1)
@@ -107,19 +88,25 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
   // ----------------------------------
   //      Sorting Logic
   // ----------------------------------
-  const sort = (data: RowContainer[]) => {
-    const selector = columns[sortedColumn].selector
-    if (!selector) return
-    const sorted = sortBy(data, (row: RowContainer) => {
-      return typeof selector === 'string'
-        ? row.datum[selector] // selector is property
-        : selector(row.datum) // selector is function
-    })
-    if (reverseSort) {
-      setRows(reverse(sorted))
-    } else {
-      setRows(sorted)
+  const sort = (data: any[]) => {
+    if (sortedColumn === -1) {
+      return data
     }
+    const selector = columns[sortedColumn].selector
+    if (!selector) {
+      return data
+    } else {
+      const sorted = sortBy(
+        data,
+        (row: any) =>
+          typeof selector === 'string'
+            ? row[selector] // selector is property
+            : selector(row) // selector is function
+      )
+      return (reverseSort)
+        ? reverse(sorted)
+        : sorted
+      }
   }
 
   const toggleReverseSort = () => {
@@ -136,7 +123,10 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
   }
 
   const previousPage = () => {
-    const newPage = pageNumber === 1 ? pages : pageNumber - 1
+    const newPage =
+      pageNumber === 1
+        ? pages
+        : pageNumber - 1
     setPageNumber(newPage)
   }
 
@@ -147,54 +137,37 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
 
   const getPageNumberData = () => {
     const start = (pageNumber - 1) * chunk + 1
-    const end = pageNumber === pages ? rows!.length : pageNumber * chunk
-    return `${start}-${end} of ${rows!.length}`
+    const end = pageNumber === pages ? data!.length : pageNumber * chunk
+    return `${start}-${end} of ${data!.length}`
   }
 
   // ----------------------------------
   //      Side Effects
   // ----------------------------------
 
-  // Sorting
-  React.useEffect(() => {
-    sortedColumn !== -1 && rows && sort(rows)
-  }, [sortedColumn, reverseSort]) // eslint-disable-line
-
   // Pagination
   React.useEffect(() => {
-    if (rows && rows.length) {
-      const r = rows.slice((pageNumber - 1) * chunk, pageNumber * chunk)
-      setPagination(r)
-      if (r.length === 0) {
+    if (paginate && data && data.length) {
+      const view = data.slice((pageNumber - 1) * chunk, pageNumber * chunk)
+      setPagination(view)
+      if (view.length === 0) {
         setPageNumber(1)
       }
     }
-  }, [chunk, rows, pageNumber])
-
-  // Rows
-  React.useEffect(() => {
-    if (!Array.isArray(data)) {
-      return setRows([])
-    }
-    const containers = data.map((datum: any) => {
-      const id = tableRowKey ? datum[tableRowKey] : randomString()
-      return { id, datum }
-    })
-    return sortedColumn !== -1 ? sort(containers) : setRows(containers)
-  }, [data, setRows, tableRowKey, sortedColumn]) // eslint-disable-line
+  }, [chunk, data, pageNumber, paginate])
 
   // ----------------------------------
   //      JSX component
   // ----------------------------------
   return (
     <React.Fragment>
-      {rows && rows.length ? (
+      {data && data.length ? (
         <div className="custom-table">
           {displayColumnLabels && (
             <ColumnLabels
               {...props}
               reverseSort={reverseSort}
-              rows={rows}
+              rows={data}
               setSortedColumn={setSortedColumn}
               sortedColumn={sortedColumn}
               toggleReverseSort={toggleReverseSort}
@@ -202,9 +175,9 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
           )}
           <TableBody
             {...props}
-            rows={pagination}
+            rows={paginate ? sort(pagination): sort(data)}
           />
-          {rows.length > 25 ? (
+          {paginate && data.length > 25 ? (
             <div className="custom-table__pagination">
               <div className="custom-table__push-right" />
               <label htmlFor="select-chunk">Rows per page:</label>
@@ -223,11 +196,13 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
                   {getPageNumberData()}
                 </p>
                 <IconButton
-                  name="chevronLeft"
+                  className="custom-table__page-select--prev"
+                  name="chevronRight"
                   onClick={previousPage}
                   tooltip="Previous Page"
                 />
                 <IconButton
+                  className="custom-table__page-select--next"
                   name="chevronRight"
                   onClick={nextPage}
                   tooltip="Next Page"
@@ -238,7 +213,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
             <div className="u-flex">
               <div className="u-flex-grow-1" />
               <p className="custom-table__page-select__page-data">
-                1 - {rows.length} of {rows.length}
+                1 - {data.length} of {data.length}
               </p>
             </div>
           )}
@@ -246,11 +221,9 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
       ) : noDataComponent ? (
         noDataComponent
       ) : (
-        <React.Fragment>
-          <FlexRow>
-            <p>No records were found.</p>
-          </FlexRow>
-        </React.Fragment>
+        <div>
+          <p>No records were found.</p>
+        </div>
       )}
     </React.Fragment>
   )

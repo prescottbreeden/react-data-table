@@ -3,7 +3,6 @@ import { map, reduce } from 'lodash';
 import { TableRow } from './Row.component';
 import {
   ConditionalRowStyle,
-  RowContainer,
   TableComponentProps,
 } from './Table.component';
 
@@ -36,13 +35,13 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
 
   return (
     <div className="custom-table__body">
-      {map(rows, (row: RowContainer) => {
-        const { style } = getConditionalStyle(row.datum);
+      {map(rows, (row: any) => {
+        const { style } = getConditionalStyle(row);
         return (
-          <React.Fragment key={row.id}>
+          <div key={row._id}>
             <TableRow {...props} row={row} style={style} />
-          </React.Fragment>
-        );
+          </div>
+        )
       })}
     </div>
   );

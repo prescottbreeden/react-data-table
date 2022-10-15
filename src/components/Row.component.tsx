@@ -2,7 +2,6 @@ import React from 'react'
 import { prop, randomString } from '../util/objectUtility'
 import {
   TableComponentProps,
-  RowContainer,
   TableColumnProps,
 } from './Table.component'
 import { getColStyle } from './ColumnLabels.component'
@@ -19,7 +18,7 @@ export const TableRow: React.FC<RowProps> = ({
   row,
   style,
 }) => {
-  const handleRowClick = (row: RowContainer) => {
+  const handleRowClick = (row: any) => {
     onRowClick && onRowClick(row)
   }
 
@@ -27,7 +26,7 @@ export const TableRow: React.FC<RowProps> = ({
     return cellGrid ? 'custom-table__row--no-gutters' : ''
   }
 
-  const getRowClass = (_row: RowContainer) => {
+  const getRowClass = (_row: any) => {
     return `custom-table__row ${getCellGrid()}${
       onRowClick ? 'custom-table__row--pointer' : ''
     }`
@@ -37,15 +36,15 @@ export const TableRow: React.FC<RowProps> = ({
     ? 'custom-table__cell custom-table__cell--grid'
     : 'custom-table__cell'
 
-  const renderCell = (col: TableColumnProps, row: RowContainer) => {
+  const renderCell = (col: TableColumnProps, row: any) => {
     const colStyle = getColStyle(columns, col)
     const cell = col.cell
-      ? col.cell(row.datum)
+      ? col.cell(row)
       : typeof col.selector === 'string'
-      ? prop(col.selector, row.datum)
+      ? prop(col.selector, row)
       : typeof col.selector === 'function'
-      ? col.selector(row.datum)
-      : prop(col.name, row.datum)
+      ? col.selector(row)
+      : prop(col.name, row)
 
     return (
       <div
@@ -68,21 +67,16 @@ export const TableRow: React.FC<RowProps> = ({
   return onRowClick ? (
     <div
       aria-label="Table Row"
-      style={style}
       className={getRowClass(row)}
-      onClick={() => handleRowClick(row.datum)}
-      tabIndex={0}
-      onKeyDown={(e: React.KeyboardEvent) =>
-        e.keyCode === 13 && handleRowClick(row.datum)
-      }
+      onClick={() => handleRowClick(row)}
+      style={style}
     >
       {columns.map((col: TableColumnProps) => renderCell(col, row))}
     </div>
   ) : (
     <div
-      style={style}
       className={getRowClass(row)}
-      tabIndex={-1}
+      style={style}
     >
       {columns.map((col: TableColumnProps) => renderCell(col, row))}
     </div>

@@ -2,7 +2,6 @@ import React from 'react';
 import {
   TableColumnProps,
   TableComponentProps,
-  RowContainer,
 } from './Table.component';
 import { Icon } from './Icon';
 
@@ -44,7 +43,7 @@ export const getColStyle = (
 // --[ component ]-------------------------------------------------------------
 
 export interface ColumnProps extends TableComponentProps {
-  rows: RowContainer[];
+  rows: any[];
   reverseSort: boolean;
   setSortedColumn: Function;
   sortedColumn: number;
