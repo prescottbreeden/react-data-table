@@ -3,8 +3,11 @@ import { TableComponentProps, TableColumnProps } from './Table.component'
 import { getColStyle } from './ColumnLabels.component'
 
 const randomString = () => {
-  return Math.random().toString(36).substring(7);
-};
+  return Math.random().toString(36).substring(7)
+}
+
+const truncate = (str: string) => 
+  str.length > 49 ? str.slice(0, 49) + '...' : str
 
 interface RowProps extends TableComponentProps {
   row: any
@@ -15,12 +18,12 @@ export const TableRow: React.FC<RowProps> = ({ columns, row, style }) => {
   const renderCell = (col: TableColumnProps, row: any) => {
     const colStyle = getColStyle(col)
     const cell = col.cell
-      ? col.cell(row)
+      ? col.cell(row)?.toString()
       : typeof col.selector === 'string'
-      ? row[col.selector]
+      ? row[col.selector]?.toString()
       : typeof col.selector === 'function'
       ? col.selector(row)
-      : row[col.name]
+      : row[col.name]?.toString()
 
     return (
       <span
@@ -34,7 +37,7 @@ export const TableRow: React.FC<RowProps> = ({ columns, row, style }) => {
           padding: '10px',
         }}
       >
-        {cell}
+        {truncate(cell)}
       </span>
     )
   }

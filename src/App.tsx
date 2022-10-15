@@ -3,62 +3,36 @@ import { TableColumnProps } from './components/Table.component'
 import { TableComponent as Table } from './components/Table.component'
 import { fakedata } from './fake'
 import { get } from 'lodash/fp'
+import { startCase } from 'lodash'
 
-const HEADERS: TableColumnProps[] = [
-  {
-    name: 'Name',
-    cell: get('name'),
-    sortable: true,
-    selector: get('name'),
-  },
-  {
-    name: 'DOB',
-    cell: get('dob'),
-    sortable: true,
-    selector: get('dob'),
-  },
-  {
-    name: 'Score',
-    cell: get('score'),
-    sortable: true,
-    selector: get('score'),
-  },
-  {
-    name: 'Email',
-    cell: get('email'),
-    sortable: true,
-    selector: get('email'),
-  },
-  {
-    name: 'Pets',
-    cell: ({ pets }) => pets.join(', '),
-    sortable: true,
-    selector: ({ pets }) => pets.join(', '),
-  },
-  {
-    name: 'Verified',
-    cell: ({ verified }) => verified.toString(),
-    sortable: true,
-    selector: get('verified'),
-  },
-  {
-    name: 'Url',
-    cell: get('url'),
-    sortable: true,
-    selector: get('url'),
-  },
-  {
-    name: 'Salary',
-    cell: get('salary'),
-    sortable: true,
-    selector: get('salary'),
-  },
-]
+const explore: { fields: string[] } = {
+  fields: [
+    '_id',
+    'name',
+    'address.street',
+    'address.town',
+    'address.postode',
+    'dob',
+    'score',
+    'pets',
+    'verified',
+    'url',
+    'salary',
+    'description',
+  ]
+}
+
+const columns: TableColumnProps[] = explore.fields.map(field => ({
+  name: startCase(field),
+  cell: get(field),
+  sortable: true,
+  selector: get(field),
+}))
 
 function App() {
   return (
     <div>
-      <Table columns={HEADERS} data={fakedata} />
+      <Table columns={columns} data={fakedata} />
     </div>
   )
 }
