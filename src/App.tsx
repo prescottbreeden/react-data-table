@@ -29,16 +29,36 @@ const HEADERS: TableColumnProps[] = [
     sortable: true,
     selector: get('email'),
   },
+  {
+    name: 'Pets',
+    cell: ({ pets }) => pets.join(', '),
+    sortable: true,
+    selector: ({ pets }) => pets.join(', '),
+  },
+  {
+    name: 'Verified',
+    cell: ({ verified }) => verified.toString(),
+    sortable: true,
+    selector: get('verified'),
+  },
+  {
+    name: 'Url',
+    cell: get('url'),
+    sortable: true,
+    selector: get('url'),
+  },
+  {
+    name: 'Salary',
+    cell: get('salary'),
+    sortable: true,
+    selector: get('salary'),
+  },
 ]
 
 function App() {
   return (
     <div>
-      <Table
-        cellGrid
-        columns={HEADERS}
-        data={fakedata}
-      />
+      <Table columns={HEADERS} data={fakedata} />
     </div>
   )
 }

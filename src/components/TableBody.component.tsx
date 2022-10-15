@@ -32,8 +32,13 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   }
 
   return (
-    <div className="custom-table__body">
-      <List height={1000} itemCount={rows.length} itemSize={46} width="100%">
+    <div>
+      <List
+        height={window.innerHeight - 70}
+        itemCount={rows.length}
+        itemSize={46}
+        width="100%"
+      >
         {({ index, style }) => (
           <div style={style}>
             <TableRow

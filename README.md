@@ -16,11 +16,12 @@ Code from an old project that created an in-house solution.
 
 ## TODO
 - [ ] add column virtualization
-- [x] add row virtualization
 - [ ] hide/show column
-- [ ] make headers sticky
-- [ ] make horizontal scrollable and update style options
+- [x] make headers sticky
+- [x] make horizontal scrollable and update style options
+- [x] remove Icon implementation
+- [x] add row virtualization
 - [x] general cleanup and remove noise
 - [x] make pagination optional
-- [ ] remove Icon implementation
 - [x] remove id logic
+- [x] remove flex display

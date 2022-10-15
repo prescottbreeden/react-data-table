@@ -162,7 +162,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
   return (
     <React.Fragment>
       {data && data.length ? (
-        <div className="custom-table">
+        <div style={{ width: `${(columns.length) * 424}px`}}>
           {displayColumnLabels && (
             <ColumnLabels
               {...props}
@@ -177,7 +177,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
             {...props}
             rows={paginate ? sort(pagination): sort(data)}
           />
-          {paginate && data.length > 25 ? (
+          {paginate && data.length > 25 && (
             <div className="custom-table__pagination">
               <div className="custom-table__push-right" />
               <label htmlFor="select-chunk">Rows per page:</label>
@@ -208,13 +208,6 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
                   tooltip="Next Page"
                 />
               </div>
-            </div>
-          ) : (
-            <div className="u-flex">
-              <div className="u-flex-grow-1" />
-              <p className="custom-table__page-select__page-data">
-                1 - {data.length} of {data.length}
-              </p>
             </div>
           )}
         </div>

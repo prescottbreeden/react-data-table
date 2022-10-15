@@ -12,30 +12,10 @@ interface RowProps extends TableComponentProps {
 }
 
 export const TableRow: React.FC<RowProps> = ({
-  cellGrid = false,
   columns,
-  onRowClick,
   row,
   style,
 }) => {
-  const handleRowClick = (row: any) => {
-    onRowClick && onRowClick(row)
-  }
-
-  const getCellGrid = () => {
-    return cellGrid ? 'custom-table__row--no-gutters' : ''
-  }
-
-  const getRowClass = (_row: any) => {
-    return `custom-table__row ${getCellGrid()}${
-      onRowClick ? 'custom-table__row--pointer' : ''
-    }`
-  }
-
-  const cellClass = cellGrid
-    ? 'custom-table__cell custom-table__cell--grid'
-    : 'custom-table__cell'
-
   const renderCell = (col: TableColumnProps, row: any) => {
     const colStyle = getColStyle(columns, col)
     const cell = col.cell
@@ -47,37 +27,24 @@ export const TableRow: React.FC<RowProps> = ({
       : prop(col.name, row)
 
     return (
-      <div
+      <span
         aria-label={col.name}
-        className={cellClass}
         key={col.name ? col.name : randomString()}
-        style={colStyle}
-        onClick={(e: React.MouseEvent) => {
-          if (col.ignoreRowClick) {
-            e.stopPropagation()
-          }
+        style={{
+          ...colStyle,
+          border: '1px solid black',
+          display: 'inline-block',
+          width: '400px',
+          padding: '10px'
         }}
       >
         {cell}
-      </div>
+      </span>
     )
   }
 
-  // only add onclick handlers if onRowClick is provided
-  return onRowClick ? (
-    <div
-      aria-label="Table Row"
-      className={getRowClass(row)}
-      onClick={() => handleRowClick(row)}
-      style={style}
-    >
-      {columns.map((col: TableColumnProps) => renderCell(col, row))}
-    </div>
-  ) : (
-    <div
-      className={getRowClass(row)}
-      style={style}
-    >
+  return (
+    <div style={style}>
       {columns.map((col: TableColumnProps) => renderCell(col, row))}
     </div>
   )

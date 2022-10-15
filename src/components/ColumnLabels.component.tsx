@@ -1,32 +1,28 @@
-import React from 'react';
-import {
-  TableColumnProps,
-  TableComponentProps,
-} from './Table.component';
-import { Icon } from './Icon';
+import React from 'react'
+import { TableColumnProps, TableComponentProps } from './Table.component'
 
 // --[ utils ]-----------------------------------------------------------
 export const getColStyle = (
-  columns: TableColumnProps[],
+  _columns: TableColumnProps[],
   col: TableColumnProps
 ) => {
-  const { style, center, width } = col;
-  const defaultWidth = 100 / columns.length;
+  const { style, center, width } = col
+  const defaultWidth = 400
 
   const getStyleWidth = () => {
     if (style && style.width) {
-      return style.width;
+      return style.width
     }
     if (width) {
-      return width;
+      return width
     }
-    return `${defaultWidth}%`;
-  };
+    return `${defaultWidth}px`
+  }
 
   const withWidth = {
     ...style,
     width: getStyleWidth(),
-  };
+  }
 
   const withCenter = center
     ? {
@@ -35,127 +31,61 @@ export const getColStyle = (
         placeItems: 'center',
         textAlign: 'center',
       }
-    : withWidth;
+    : withWidth
 
-  return withCenter;
-};
+  return withCenter
+}
 
 // --[ component ]-------------------------------------------------------------
 
 export interface ColumnProps extends TableComponentProps {
-  rows: any[];
-  reverseSort: boolean;
-  setSortedColumn: Function;
-  sortedColumn: number;
-  toggleReverseSort: Function;
+  rows: any[]
+  reverseSort: boolean
+  setSortedColumn: Function
+  sortedColumn: number
+  toggleReverseSort: Function
 }
 
 export const ColumnLabels: React.FC<ColumnProps> = (props) => {
-  const {
-    columns,
-    reverseSort,
-    rows,
-    setSortedColumn,
-    sortedColumn,
-    toggleReverseSort,
-  } = props;
-
-  const getSortIcon = (col: TableColumnProps, index: number) => {
-    if (sortedColumn === index && !reverseSort) {
-      return {
-        name: 'arrowDropUp',
-        tooltip: `Sort table by '${col.name}' ascending.`,
-      };
-    }
-    return {
-      name: 'arrowDropDown',
-      tooltip: `Sort table by '${col.name}' descending.`,
-    };
-  };
+  const { columns, setSortedColumn, toggleReverseSort } = props
 
   const handleClick = (index: number) => {
-    setSortedColumn(index);
-    toggleReverseSort();
-  };
+    setSortedColumn(index)
+    toggleReverseSort()
+  }
 
-  const handleKeyPress = (e: React.KeyboardEvent, index: number) => {
-    e.preventDefault();
-    (e.key === 'Enter' || e.key === ' ') && handleClick(index);
-  };
-
-  const renderIcon = (col: TableColumnProps, index: number) => {
-    const sortIcon = getSortIcon(col, index);
-    return (
-      <button
-        className="custom-table__sort-button no-print"
-        onKeyPress={(e) => handleKeyPress(e, index)}
-        onClick={() => handleClick(index)}
-      >
-        <span className="u-hide-text">{sortIcon.tooltip}</span>
-        <Icon name={sortIcon.name} className="custom-table__sort-icon" />
-      </button>
-    );
-  };
-
-  const renderLabel = (col: TableColumnProps, index: number) => {
+  const renderLabel = (col: TableColumnProps) => {
     if (typeof col.label === 'function') {
-      return (
-        <React.Fragment>
-          {col.label()}
-          <span className="custom-table__sort-container">
-            {col.sortable && rows.length > 1 && renderIcon(col, index)}
-          </span>
-        </React.Fragment>
-      );
+      return col.label()
+    } else if (typeof col.label === 'string') {
+      return col.label
+    } else {
+      return col.label ? col.label : col.name
     }
-    if (typeof col.label === 'string') {
-      return (
-        <React.Fragment>
-          {col.label}
-          <span className="custom-table__sort-container">
-            {col.sortable && rows.length > 1 && renderIcon(col, index)}
-          </span>
-        </React.Fragment>
-      );
-    }
-    return (
-      <React.Fragment>
-        {col.label ? col.label : col.name}
-        <span className="custom-table__sort-container">
-          {col.sortable && rows.length > 1 && renderIcon(col, index)}
-        </span>
-      </React.Fragment>
-    );
-  };
+  }
 
   return (
-    <div className="custom-table__header">
+    <div>
       {columns.map((col: TableColumnProps, index: number) => {
-        const colStyle = getColStyle(columns, col);
-        const isCenter = 'center' in col;
+        const colStyle = getColStyle(columns, col)
+        const isCenter = 'center' in col
         const base = {
           ...colStyle,
+          border: '1px solid black',
+          display: 'inline-block',
           fontWeight: 'bold',
-          marginBottom: '.5rem',
-          display: 'flex',
-        };
-        const colLabel = isCenter
-          ? { ...base, justifyContent: 'center' }
-          : base;
+          padding: '10px',
+        }
+        const colLabel = isCenter ? { ...base, textAlign: 'center' } : base
 
         return (
-          <div
-            className="custom-table__cell"
-            key={`${col.name}-${index}`}
-            style={colLabel}
-          >
-            <div className="custom-table__cell-label">
-              {renderLabel(col, index)}
-            </div>
-          </div>
+          <span key={`${col.name}-${index}`} style={colLabel}>
+            <span onClick={() => handleClick(index)}>
+              {renderLabel(col)}
+            </span>
+          </span>
         )
       })}
     </div>
-  );
-};
-
+  )
+}

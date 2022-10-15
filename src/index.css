@@ -1649,19 +1649,19 @@ body {
       width: 1.5rem !important;
       fill: #007d89; }
   .custom-table__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
+    /* display: flex; */
+    /* justify-content: space-between; */
+    /* align-items: flex-end; */
     padding: 0 1rem; }
   .custom-table__icon {
     margin-left: 0.5rem;
     width: 2.4rem;
     fill: #007d89; }
   .custom-table__row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+    /* display: flex; */
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    /* margin-bottom: 1rem; */
     min-height: 4rem;
     padding: 0.5rem 1rem;
     border: 1px solid transparent;
