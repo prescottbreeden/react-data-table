@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { startCase } from 'lodash'
 import { Icon } from './Icon'
 
@@ -13,19 +13,17 @@ type IconButtonProps = {
   tooltip: string
 }
 
-export const IconButton: React.FC<IconButtonProps> = (props) => {
-  const {
-    className,
-    modalClick,
-    name,
-    onClick,
-    text,
-    textAfter = false,
-    textClassName,
-    tooltip,
-  } = props
-
-  const btnRef = useRef(null)
+export const IconButton: React.FC<IconButtonProps> = ({
+  className,
+  modalClick,
+  name,
+  onClick,
+  text,
+  textAfter = false,
+  textClassName,
+  tooltip,
+}) => {
+  const btnRef = React.useRef(null)
 
   const handleClick = (_e: React.MouseEvent<HTMLElement>) => {
     modalClick && modalClick(btnRef)

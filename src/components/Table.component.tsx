@@ -1,56 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { map, reduce, sortBy, reverse, get } from 'lodash';
-import { mergeObjects, prop, randomString } from '../util/objectUtility';
-import { ColumnLabels } from './ColumnLabels.component';
-import { TableBody } from './TableBody.component';
-import { IconButton } from './IconButton';
+import React from 'react'
+import { sortBy, reverse, get } from 'lodash'
+import { randomString } from '../util/objectUtility'
+import { ColumnLabels } from './ColumnLabels.component'
+import { TableBody } from './TableBody.component'
+import { IconButton } from './IconButton'
 
 export const FlexRow: React.FC<any> = (props) => {
   return (
     <div {...props} className="form__row">
       {props.children}
     </div>
-  );
-};
-
-
-export interface TableComponentProps {
-  cellGrid?: boolean;
-  columns: TableColumnProps[];
-  conditionalRowStyles?: ConditionalRowStyle[];
-  data?: any[];
-  displayColumnLabels?: boolean;
-  expandableRow?: (row: any) => JSX.Element | null;
-  noDataComponent?: JSX.Element;
-  onRowClick?: (row: any) => void | any;
-  paginationQuantity?: number;
-  tableRowKey?: string;
-  useRowExpander?: boolean;
+  )
 }
 
-export type CellContainer = (row: any) => JSX.Element | string | null;
+export interface TableComponentProps {
+  cellGrid?: boolean
+  columns: TableColumnProps[]
+  conditionalRowStyles?: ConditionalRowStyle[]
+  data?: any[]
+  displayColumnLabels?: boolean
+  noDataComponent?: JSX.Element
+  onRowClick?: (row: any) => void | any
+  paginationQuantity?: number
+  tableRowKey?: string
+}
+
+export type CellContainer = (row: any) => JSX.Element | string | null
 
 export interface TableColumnProps {
-  cell?: CellContainer;
-  center?: boolean;
-  ignoreRowClick?: boolean;
-  label?: string | JSX.Element | (() => string | JSX.Element);
-  name: string;
-  selector?: string | ((row: any) => any);
-  sortable?: boolean;
-  style?: any;
-  width?: string;
+  cell?: CellContainer
+  center?: boolean
+  ignoreRowClick?: boolean
+  label?: string | JSX.Element | (() => string | JSX.Element)
+  name: string
+  selector?: string | ((row: any) => any)
+  sortable?: boolean
+  style?: any
+  width?: string
 }
 
 export interface ConditionalRowStyle {
-  style: any;
-  when: (row: any) => boolean;
+  style: any
+  when: (row: any) => boolean
 }
 
 export type RowContainer = {
-  datum: any;
-  id: any;
-};
+  datum: any
+  id: any
+}
+
+export type ExpandDict = {
+  [key: string]: boolean
+}
 
 /**
  * Component generating tables.  Import the TableColumnProps to help
@@ -81,122 +82,106 @@ export type RowContainer = {
 export const TableComponent: React.FC<TableComponentProps> = (props) => {
   const {
     columns,
-    paginationQuantity = 25,
     data = [],
     displayColumnLabels = true,
     noDataComponent,
+    paginationQuantity = 25,
     tableRowKey,
-  } = props;
+  } = props
 
   // ----------------------------------
   //      State Management
   // ----------------------------------
-  const [expandDict, setExpandDict] = useState<any>({});
-  const [rows, setRows] = useState<RowContainer[]>();
+  const [rows, setRows] = React.useState<RowContainer[]>()
 
   // pagination
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [chunk, setChunk] = useState<number>(paginationQuantity);
-  const [pagination, setPagination] = useState<any[]>([]);
-  const pages = data && data.length ? Math.floor(data.length / chunk) + 1 : 1;
+  const [pageNumber, setPageNumber] = React.useState<number>(1)
+  const [chunk, setChunk] = React.useState<number>(paginationQuantity)
+  const [pagination, setPagination] = React.useState<any[]>([])
+  const pages = data && data.length ? Math.floor(data.length / chunk) + 1 : 1
 
   // column sorting
-  const [sortedColumn, setSortedColumn] = useState<number>(-1);
-  const [reverseSort, setReverseSort] = useState<boolean>(false);
+  const [sortedColumn, setSortedColumn] = React.useState<number>(-1)
+  const [reverseSort, setReverseSort] = React.useState<boolean>(false)
 
   // ----------------------------------
   //      Sorting Logic
   // ----------------------------------
   const sort = (data: RowContainer[]) => {
-    const selector = columns[sortedColumn].selector;
-    if (!selector) return;
+    const selector = columns[sortedColumn].selector
+    if (!selector) return
     const sorted = sortBy(data, (row: RowContainer) => {
       return typeof selector === 'string'
-        ? prop(selector, row.datum)
-        : selector(row.datum);
-    });
+        ? row.datum[selector] // selector is property
+        : selector(row.datum) // selector is function
+    })
     if (reverseSort) {
-      setRows(reverse(sorted));
+      setRows(reverse(sorted))
+    } else {
+      setRows(sorted)
     }
-    setRows(sorted);
-  };
+  }
 
   const toggleReverseSort = () => {
-    setReverseSort(!reverseSort);
-  };
+    setReverseSort(!reverseSort)
+  }
 
   // ----------------------------------
   //      Pagination Logic
   // ----------------------------------
 
   const handleChunkChange = (e: any) => {
-    setChunk(e.target.value);
-    setPageNumber(1);
-  };
+    setChunk(e.target.value)
+    setPageNumber(1)
+  }
 
   const previousPage = () => {
-    const newPage = pageNumber === 1 ? pages : pageNumber - 1;
-    setPageNumber(newPage);
-  };
+    const newPage = pageNumber === 1 ? pages : pageNumber - 1
+    setPageNumber(newPage)
+  }
 
   const nextPage = () => {
-    const newPage = pageNumber === pages ? 1 : pageNumber + 1;
-    setPageNumber(newPage);
-  };
+    const newPage = pageNumber === pages ? 1 : pageNumber + 1
+    setPageNumber(newPage)
+  }
 
   const getPageNumberData = () => {
-    const start = (pageNumber - 1) * chunk + 1;
-    const end = pageNumber === pages ? rows!.length : pageNumber * chunk;
-    return `${start}-${end} of ${rows!.length}`;
-  };
+    const start = (pageNumber - 1) * chunk + 1
+    const end = pageNumber === pages ? rows!.length : pageNumber * chunk
+    return `${start}-${end} of ${rows!.length}`
+  }
 
   // ----------------------------------
-  //      Use Effects
+  //      Side Effects
   // ----------------------------------
 
   // Sorting
-  useEffect(() => {
-    sortedColumn !== -1 && rows && sort(rows);
-  }, [sortedColumn, reverseSort]); // eslint-disable-line
+  React.useEffect(() => {
+    sortedColumn !== -1 && rows && sort(rows)
+  }, [sortedColumn, reverseSort]) // eslint-disable-line
 
   // Pagination
-  useEffect(() => {
+  React.useEffect(() => {
     if (rows && rows.length) {
-      const r = rows.slice((pageNumber - 1) * chunk, pageNumber * chunk);
-      setPagination(r);
+      const r = rows.slice((pageNumber - 1) * chunk, pageNumber * chunk)
+      setPagination(r)
       if (r.length === 0) {
-        setPageNumber(1);
+        setPageNumber(1)
       }
     }
-  }, [chunk, rows, pageNumber]);
+  }, [chunk, rows, pageNumber])
 
   // Rows
-  useEffect(() => {
+  React.useEffect(() => {
     if (!Array.isArray(data)) {
-      return setRows([]);
+      return setRows([])
     }
-    const containers = map(data, (datum: any) => {
-      const id = tableRowKey ? datum[tableRowKey] : randomString();
-      return { id, datum };
-    });
-    return sortedColumn !== -1 ? sort(containers) : setRows(containers);
-  }, [data, setRows, tableRowKey, sortedColumn]); // eslint-disable-line
-
-  // Expand Dictionary
-  useEffect(() => {
-    if (rows && rows.length) {
-      if (!Object.keys(expandDict).length) {
-        const keys = reduce(
-          rows,
-          (prev: any, curr: RowContainer) => {
-            return mergeObjects(prev, { [curr.id]: false });
-          },
-          {}
-        );
-        setExpandDict(keys);
-      }
-    }
-  }, [rows, setExpandDict, expandDict]);
+    const containers = data.map((datum: any) => {
+      const id = tableRowKey ? datum[tableRowKey] : randomString()
+      return { id, datum }
+    })
+    return sortedColumn !== -1 ? sort(containers) : setRows(containers)
+  }, [data, setRows, tableRowKey, sortedColumn]) // eslint-disable-line
 
   // ----------------------------------
   //      JSX component
@@ -217,8 +202,6 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
           )}
           <TableBody
             {...props}
-            expandDict={expandDict}
-            setExpandDict={setExpandDict}
             rows={pagination}
           />
           {rows.length > 25 ? (
@@ -240,13 +223,13 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
                   {getPageNumberData()}
                 </p>
                 <IconButton
-                  onClick={previousPage}
                   name="chevronLeft"
+                  onClick={previousPage}
                   tooltip="Previous Page"
                 />
                 <IconButton
-                  onClick={nextPage}
                   name="chevronRight"
+                  onClick={nextPage}
                   tooltip="Next Page"
                 />
               </div>
@@ -255,7 +238,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
             <div className="u-flex">
               <div className="u-flex-grow-1" />
               <p className="custom-table__page-select__page-data">
-                1 - {get(rows, 'length')} of {get(rows, 'length')}
+                1 - {rows.length} of {rows.length}
               </p>
             </div>
           )}
@@ -271,5 +254,4 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
       )}
     </React.Fragment>
   )
-};
-
+}

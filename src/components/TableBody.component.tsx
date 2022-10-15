@@ -1,6 +1,5 @@
 import React from 'react';
 import { map, reduce } from 'lodash';
-import { CollapsibleList } from '@rmwc/list';
 import { TableRow } from './Row.component';
 import {
   ConditionalRowStyle,
@@ -10,12 +9,10 @@ import {
 
 interface TableBodyProps extends TableComponentProps {
   rows: any[];
-  expandDict: any;
-  setExpandDict: Function;
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
-  const { conditionalRowStyles, rows, expandDict, expandableRow } = props;
+  const { conditionalRowStyles, rows } = props;
 
   const getConditionalStyle = (row: any) => {
     const output = { style: {} };
@@ -44,17 +41,6 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
         return (
           <React.Fragment key={row.id}>
             <TableRow {...props} row={row} style={style} />
-            {expandableRow && (
-              <CollapsibleList
-                key={row.id}
-                open={expandDict[row.id]}
-                handle={<React.Fragment />}
-              >
-                <div className="custom-table__expand">
-                  {expandableRow(row.datum)}
-                </div>
-              </CollapsibleList>
-            )}
           </React.Fragment>
         );
       })}

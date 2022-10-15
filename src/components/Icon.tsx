@@ -379,8 +379,13 @@ type IconComponentProps = {
   tooltip?: string
 }
 
-export const Icon: React.FC<IconComponentProps> = (props) => {
-  const { className, name, title, style = {}, tooltip } = props
+export const Icon: React.FC<IconComponentProps> = ({
+  className,
+  name,
+  style = {},
+  title,
+  tooltip,
+}) => {
   const icon = IconTable[name] ? IconTable[name] : IconTable['goat']
 
   const labelName = title ? title : startCase(name)

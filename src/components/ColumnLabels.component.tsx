@@ -1,14 +1,49 @@
 import React from 'react';
-import { map } from 'lodash';
 import {
   TableColumnProps,
   TableComponentProps,
   RowContainer,
 } from './Table.component';
-import { getColStyle } from './tableHelpers';
 import { Icon } from './Icon';
 
-interface ColumnProps extends TableComponentProps {
+// --[ utils ]-----------------------------------------------------------
+export const getColStyle = (
+  columns: TableColumnProps[],
+  col: TableColumnProps
+) => {
+  const { style, center, width } = col;
+  const defaultWidth = 100 / columns.length;
+
+  const getStyleWidth = () => {
+    if (style && style.width) {
+      return style.width;
+    }
+    if (width) {
+      return width;
+    }
+    return `${defaultWidth}%`;
+  };
+
+  const withWidth = {
+    ...style,
+    width: getStyleWidth(),
+  };
+
+  const withCenter = center
+    ? {
+        ...withWidth,
+        display: 'grid',
+        placeItems: 'center',
+        textAlign: 'center',
+      }
+    : withWidth;
+
+  return withCenter;
+};
+
+// --[ component ]-------------------------------------------------------------
+
+export interface ColumnProps extends TableComponentProps {
   rows: RowContainer[];
   reverseSort: boolean;
   setSortedColumn: Function;
@@ -24,7 +59,6 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
     setSortedColumn,
     sortedColumn,
     toggleReverseSort,
-    useRowExpander,
   } = props;
 
   const getSortIcon = (col: TableColumnProps, index: number) => {
@@ -97,8 +131,7 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
 
   return (
     <div className="custom-table__header">
-      {useRowExpander && <div className="custom-table__expand-icon" />}
-      {map(columns, (col: TableColumnProps, index: number) => {
+      {columns.map((col: TableColumnProps, index: number) => {
         const colStyle = getColStyle(columns, col);
         const isCenter = 'center' in col;
         const base = {
@@ -112,12 +145,16 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
           : base;
 
         return (
-          <div className="custom-table__cell" key={index} style={colLabel}>
+          <div
+            className="custom-table__cell"
+            key={`${col.name}-${index}`}
+            style={colLabel}
+          >
             <div className="custom-table__cell-label">
               {renderLabel(col, index)}
             </div>
           </div>
-        );
+        )
       })}
     </div>
   );
