@@ -1,6 +1,5 @@
 import React from 'react'
 import { FixedSizeList as List } from 'react-window'
-import { reduce } from 'lodash'
 import { TableRow } from './Row.component'
 import { ConditionalRowStyle, TableComponentProps } from './Table.component'
 
@@ -12,10 +11,9 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
   const { conditionalRowStyles, rows } = props
 
   const getConditionalStyle = (row: any) => {
-    const output = { style: {} }
+    let output = { style: {} }
     if (conditionalRowStyles) {
-      reduce(
-        conditionalRowStyles,
+      output = conditionalRowStyles.reduce(
         (acc: { style: any }, curr: ConditionalRowStyle) => {
           if (curr.when(row)) {
             acc.style = {
