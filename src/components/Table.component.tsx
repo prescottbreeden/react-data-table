@@ -2,7 +2,6 @@ import React from 'react'
 import { sortBy, reverse } from 'lodash'
 import { ColumnLabels } from './ColumnLabels.component'
 import { TableBody } from './TableBody.component'
-import { IconButton } from './IconButton'
 
 export interface TableComponentProps {
   cellGrid?: boolean
@@ -162,7 +161,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
   return (
     <React.Fragment>
       {data && data.length ? (
-        <div style={{ width: `${(columns.length) * 424}px`}}>
+        <div style={{ width: `${columns.length * 424}px` }}>
           {displayColumnLabels && (
             <ColumnLabels
               {...props}
@@ -175,7 +174,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
           )}
           <TableBody
             {...props}
-            rows={paginate ? sort(pagination): sort(data)}
+            rows={paginate ? sort(pagination) : sort(data)}
           />
           {paginate && data.length > 25 && (
             <div className="custom-table__pagination">
@@ -195,18 +194,12 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
                 <p className="custom-table__page-select__page-data">
                   {getPageNumberData()}
                 </p>
-                <IconButton
-                  className="custom-table__page-select--prev"
-                  name="chevronRight"
-                  onClick={previousPage}
-                  tooltip="Previous Page"
-                />
-                <IconButton
-                  className="custom-table__page-select--next"
-                  name="chevronRight"
-                  onClick={nextPage}
-                  tooltip="Next Page"
-                />
+                <button onClick={previousPage}>
+                  Prev
+                </button>
+                <button onClick={nextPage}>
+                  Next
+                </button>
               </div>
             </div>
           )}

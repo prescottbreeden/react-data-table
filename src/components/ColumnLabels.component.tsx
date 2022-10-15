@@ -3,7 +3,6 @@ import { TableColumnProps, TableComponentProps } from './Table.component'
 
 // --[ utils ]-----------------------------------------------------------
 export const getColStyle = (
-  _columns: TableColumnProps[],
   col: TableColumnProps
 ) => {
   const { style, center, width } = col
@@ -67,7 +66,7 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
   return (
     <div>
       {columns.map((col: TableColumnProps, index: number) => {
-        const colStyle = getColStyle(columns, col)
+        const colStyle = getColStyle(col)
         const isCenter = 'center' in col
         const base = {
           ...colStyle,
