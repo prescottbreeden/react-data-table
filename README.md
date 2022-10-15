@@ -15,7 +15,8 @@ Code from an old project that created an in-house solution.
 - small memory footprint
 
 ## TODO
-- [ ] add virtualization
+- [ ] add column virtualization
+- [x] add row virtualization
 - [ ] hide/show column
 - [ ] make headers sticky
 - [ ] make horizontal scrollable and update style options
@@ -23,4 +24,3 @@ Code from an old project that created an in-house solution.
 - [x] make pagination optional
 - [ ] remove Icon implementation
 - [x] remove id logic
-- [ ] rewrite expandable row logic

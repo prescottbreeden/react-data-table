@@ -1,20 +1,18 @@
-import React from 'react';
-import { map, reduce } from 'lodash';
-import { TableRow } from './Row.component';
-import {
-  ConditionalRowStyle,
-  TableComponentProps,
-} from './Table.component';
+import React from 'react'
+import { FixedSizeList as List } from 'react-window'
+import { reduce } from 'lodash'
+import { TableRow } from './Row.component'
+import { ConditionalRowStyle, TableComponentProps } from './Table.component'
 
 interface TableBodyProps extends TableComponentProps {
-  rows: any[];
+  rows: any[]
 }
 
 export const TableBody: React.FC<TableBodyProps> = (props) => {
-  const { conditionalRowStyles, rows } = props;
+  const { conditionalRowStyles, rows } = props
 
   const getConditionalStyle = (row: any) => {
-    const output = { style: {} };
+    const output = { style: {} }
     if (conditionalRowStyles) {
       reduce(
         conditionalRowStyles,
@@ -23,27 +21,29 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             acc.style = {
               ...acc.style,
               ...curr.style,
-            };
+            }
           }
-          return acc;
+          return acc
         },
         output
-      );
+      )
     }
-    return output;
-  };
+    return output
+  }
 
   return (
     <div className="custom-table__body">
-      {map(rows, (row: any) => {
-        const { style } = getConditionalStyle(row);
-        return (
-          <div key={row._id}>
-            <TableRow {...props} row={row} style={style} />
+      <List height={1000} itemCount={rows.length} itemSize={46} width="100%">
+        {({ index, style }) => (
+          <div style={style}>
+            <TableRow
+              {...props}
+              row={rows[index]}
+              style={getConditionalStyle(rows[index])}
+            />
           </div>
-        )
-      })}
+        )}
+      </List>
     </div>
-  );
-};
-
+  )
+}
