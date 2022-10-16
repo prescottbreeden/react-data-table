@@ -4,7 +4,7 @@ Code from an old project that created an in-house solution.
 
 ## Features
 - column sorting and reverse sorting
-- conditional styling
+- conditional row styling
 - customizable no data/content component
 - dynamic column/cell styling
 - dynamic jsx cell rendering

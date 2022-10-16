@@ -10,8 +10,21 @@ interface RowProps extends TableComponentProps {
   style: any
 }
 
-export const TableRow: React.FC<RowProps> = ({ columns, row, style }) => {
+export const TableRow: React.FC<RowProps> = ({
+  conditionalRowStyles = [],
+  columns,
+  row,
+  style,
+}) => {
   const renderCell = (col: TableColumnProps, row: any) => {
+    const conditional = conditionalRowStyles.reduce((acc, curr) => {
+      return curr.when(row)
+        ? {
+            ...acc,
+            ...curr.style,
+          }
+        : acc
+    }, {})
     const colStyle = getColStyle(col)
     const cell = col.cell
       ? col.cell(row)?.toString()
@@ -26,11 +39,12 @@ export const TableRow: React.FC<RowProps> = ({ columns, row, style }) => {
         aria-label={col.name}
         key={col.name}
         style={{
-          ...colStyle,
           border: '1px solid black',
           display: 'inline-block',
           width: '400px',
           padding: '10px',
+          ...colStyle,
+          ...conditional
         }}
       >
         {truncate(cell)}

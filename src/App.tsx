@@ -3,7 +3,6 @@ import { TableColumnProps } from './components/Table.component'
 import { TableComponent as Table } from './components/Table.component'
 import { fakedata } from './fake'
 import { get } from 'lodash/fp'
-import { startCase } from 'lodash'
 
 const explore: { fields: string[] } = {
   fields: [
@@ -23,15 +22,27 @@ const explore: { fields: string[] } = {
 }
 
 const columns: TableColumnProps[] = explore.fields.map(field => ({
-  name: startCase(field),
+  name: field,
   cell: get(field),
   selector: get(field),
 }))
 
+/**
+ * to add conditional styles, drop this in as an example:
+        conditionalRowStyles={[
+          {
+            style: { backgroundColor: 'pink' },
+            when: ({ verified }) => verified === false,
+          },
+        ]}
+ */
 function App() {
   return (
     <div>
-      <Table columns={columns} data={fakedata} />
+      <Table
+        columns={columns}
+        data={fakedata}
+      />
     </div>
   )
 }
