@@ -1,5 +1,6 @@
 import React from 'react'
 import { TableColumnProps, TableComponentProps } from './Table.component'
+import { startCase } from 'lodash'
 
 // --[ utils ]-----------------------------------------------------------
 export const getColStyle = (col: TableColumnProps) => {
@@ -63,12 +64,12 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
     } else if (typeof col.label === 'string') {
       return col.label
     } else {
-      return col.label ? col.label : col.name
+      return startCase(col.name)
     }
   }
 
   return (
-    <div>
+    <>
       {columns.map((col: TableColumnProps, index: number) => {
         const colStyle = getColStyle(col)
         const isCenter = 'center' in col
@@ -95,6 +96,6 @@ export const ColumnLabels: React.FC<ColumnProps> = (props) => {
           </span>
         )
       })}
-    </div>
+    </>
   )
 }

@@ -161,7 +161,7 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
   //      JSX component
   // ----------------------------------
   return (
-    <React.Fragment>
+    <>
       {data && data.length ? (
         <div style={{ width: `${columns.length * 425}px` }}>
           {displayColumnLabels && (
@@ -213,6 +213,6 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
           <p>No records were found.</p>
         </div>
       )}
-    </React.Fragment>
+    </>
   )
 }

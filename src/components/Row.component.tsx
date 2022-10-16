@@ -7,14 +7,14 @@ const truncate = (str: string) =>
 
 interface RowProps extends TableComponentProps {
   row: any
-  style: any
+  conditionalStyles: React.CSSProperties
 }
 
 export const TableRow: React.FC<RowProps> = ({
-  conditionalRowStyles = [],
   columns,
+  conditionalRowStyles = [],
+  conditionalStyles,
   row,
-  style,
 }) => {
   const renderCell = (col: TableColumnProps, row: any) => {
     const conditional = conditionalRowStyles.reduce((acc, curr) => {
@@ -44,7 +44,7 @@ export const TableRow: React.FC<RowProps> = ({
           width: '400px',
           padding: '10px',
           ...colStyle,
-          ...conditional
+          ...conditional,
         }}
       >
         {truncate(cell)}
@@ -53,7 +53,7 @@ export const TableRow: React.FC<RowProps> = ({
   }
 
   return (
-    <div style={style}>
+    <div style={conditionalStyles}>
       {columns.map((col: TableColumnProps) => renderCell(col, row))}
     </div>
   )

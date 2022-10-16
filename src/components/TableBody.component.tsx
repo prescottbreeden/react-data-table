@@ -1,7 +1,7 @@
 import React from 'react'
+import { ConditionalRowStyle, TableComponentProps } from './Table.component'
 import { FixedSizeList as List } from 'react-window'
 import { TableRow } from './Row.component'
-import { ConditionalRowStyle, TableComponentProps } from './Table.component'
 
 interface TableBodyProps extends TableComponentProps {
   rows: any[]
@@ -10,24 +10,14 @@ interface TableBodyProps extends TableComponentProps {
 export const TableBody: React.FC<TableBodyProps> = (props) => {
   const { conditionalRowStyles, rows } = props
 
-  const getConditionalStyle = (row: any) => {
-    let output = { style: {} }
-    if (conditionalRowStyles) {
-      output = conditionalRowStyles.reduce(
-        (acc: { style: any }, curr: ConditionalRowStyle) => {
-          if (curr.when(row)) {
-            acc.style = {
-              ...acc.style,
-              ...curr.style,
-            }
-          }
-          return acc
-        },
-        output
-      )
-    }
-    return output
-  }
+  const getConditionalStyle = (row: any): React.CSSProperties =>
+    conditionalRowStyles
+      ? conditionalRowStyles.reduce(
+          (acc: React.CSSProperties, curr: ConditionalRowStyle) =>
+            curr.when(row) ? { ...acc, ...curr.style } : acc,
+          {}
+        )
+      : {}
 
   return (
     <div>
@@ -42,7 +32,7 @@ export const TableBody: React.FC<TableBodyProps> = (props) => {
             <TableRow
               {...props}
               row={rows[index]}
-              style={getConditionalStyle(rows[index])}
+              conditionalStyles={getConditionalStyle(rows[index])}
             />
           </div>
         )}
