@@ -109,6 +109,8 @@ export const TableComponent: React.FC<TableComponentProps> = (props) => {
   }
 
   const toggleReverseSort = () => {
+    // TODO this should be a single object with both reverse and column info
+    // so state updates can check if the column being sorted has changed
     setReverseSort(!reverseSort)
   }
 
