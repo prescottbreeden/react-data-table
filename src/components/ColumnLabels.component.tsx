@@ -2,7 +2,6 @@ import React from 'react'
 import { TableColumnProps, TableComponentProps } from './Table.component'
 import { startCase } from 'lodash'
 
-// --[ utils ]-----------------------------------------------------------
 export const getColStyle = (col: TableColumnProps) => {
   const { style, center, width } = col
   const defaultWidth = 400
@@ -33,8 +32,6 @@ export const getColStyle = (col: TableColumnProps) => {
 
   return withCenter
 }
-
-// --[ component ]-------------------------------------------------------------
 
 export interface ColumnProps extends TableComponentProps {
   rows: any[]
