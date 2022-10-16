@@ -27,11 +27,11 @@ export const TableRow: React.FC<RowProps> = ({
     }, {})
     const colStyle = getColStyle(col)
     const cell = col.cell
-      ? col.cell(row)?.toString()
+      ? col.cell(row) // cells should return JSX elements
       : typeof col.selector === 'string'
       ? row[col.selector]?.toString()
       : typeof col.selector === 'function'
-      ? col.selector(row)
+      ? col.selector(row).toString()
       : row[col.name]?.toString()
 
     return (
