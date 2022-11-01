@@ -25,6 +25,7 @@ export interface TableColumnProps {
   name: string
   selector?: string | ((row: any) => any)
   sortable?: boolean
+  sort?: any
   style?: any
   width?: string
 }
